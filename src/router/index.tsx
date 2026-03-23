@@ -20,25 +20,27 @@ function PublicRoute({ children }: { children: ReactNode }) {
   return <>{children}</>
 }
 
-export const router = createBrowserRouter([
-  {
-    path: '/login',
-    element: (
-      <PublicRoute>
-        <LoginPage />
-      </PublicRoute>
-    ),
-  },
-  {
-    path: '/',
-    element: (
-      <ProtectedRoute>
-        <ProductsPage />
-      </ProtectedRoute>
-    ),
-  },
-  {
-    path: '*',
-    element: <Navigate to="/" replace />,
-  },
-])
+export const router = createBrowserRouter(
+  [
+    {
+      path: '/login',
+      element: (
+        <PublicRoute>
+          <LoginPage />
+        </PublicRoute>
+      ),
+    },
+    {
+      path: '/',
+      element: (
+        <ProtectedRoute>
+          <ProductsPage />
+        </ProtectedRoute>
+      ),
+    },
+    {
+      path: '*',
+      element: <Navigate to="/" replace />,
+    },
+  ],
+)

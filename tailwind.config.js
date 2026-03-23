@@ -27,6 +27,15 @@ export default {
       borderRadius: {
         card: '12px',
       },
+      keyframes: {
+        loading: {
+          '0%': { transform: 'translateX(-100%)' },
+          '100%': { transform: 'translateX(400%)' },
+        },
+      },
+      animation: {
+        loading: 'loading 1.2s ease-in-out infinite',
+      },
     },
   },
   plugins: [],
