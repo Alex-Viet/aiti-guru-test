@@ -5,24 +5,28 @@ export default {
     extend: {
       colors: {
         primary: {
-          DEFAULT: '#4361EE',
+          DEFAULT: '#242EDB',
           hover: '#3451D1',
           50: '#EEF1FD',
         },
         danger: '#FA5252',
         surface: '#FFFFFF',
-        muted: '#868E96',
-        border: '#E9ECEF',
+        muted: '#e0e0e0',
+        border: '#EDEDED',
         page: '#F6F6F6',
         login: '#474747',
         'table-row-active': '#F0F3FF',
       },
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],
+        cairo: ['Cairo', 'sans-serif'],
+        'open-sans': ['Open Sans', 'sans-serif'],
+        inter: ['Inter', 'sans-serif'],
+        roboto: ['Roboto', 'sans-serif'],
       },
       boxShadow: {
         card: '0 2px 12px rgba(0,0,0,0.06)',
-        'card-lg': '0 4px 24px rgba(0,0,0,0.10)',
+        'card-lg': '0 24px 32px 0 rgba(0, 0, 0, 0.04)',
       },
       borderRadius: {
         card: '12px',

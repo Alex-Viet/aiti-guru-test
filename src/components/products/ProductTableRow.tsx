@@ -1,27 +1,43 @@
-import { useState } from 'react'
-import { Plus, MoreHorizontal } from 'lucide-react'
-import { cn, formatPrice } from '@/lib/utils'
-import { Checkbox } from '@/components/ui/Checkbox'
-import type { Product } from '@/types'
+import { useState } from "react";
+import { Plus, MoreHorizontal } from "lucide-react";
+import { cn, formatPrice } from "@/lib/utils";
+import { Checkbox } from "@/components/ui/Checkbox";
+import type { Product } from "@/types";
+
+const ROW_BASE_CLASS = "group border-b border-border transition-colors";
+const ROW_SELECTED_CLASS = "border-l-4 border-l-primary bg-primary-50";
+const ROW_DEFAULT_CLASS = "border-l-4 border-l-transparent hover:bg-[#FAFAFA]";
+
+const CELL_BASE_CLASS = "py-3 pr-4";
+const CELL_NOWRAP_CLASS = `${CELL_BASE_CLASS} whitespace-nowrap`;
+const NUMERIC_TEXT_CLASS = "font-roboto text-sm text-[#495057]";
+const ACTION_BUTTON_FOCUS_CLASS = "focus:outline-none focus:ring-2 focus:ring-primary/40";
+
+const PRIMARY_ACTION_BUTTON_CLASS =
+  "flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-white transition-colors hover:bg-primary-hover";
+const SECONDARY_ACTION_BUTTON_CLASS =
+  "flex h-8 w-8 items-center justify-center rounded-full border border-border text-muted transition-colors hover:bg-[#F1F3F5]";
 
 interface ProductTableRowProps {
-  product: Product
-  isSelected: boolean
-  onSelect: (id: number, checked: boolean) => void
+  product: Product;
+  isSelected: boolean;
+  onSelect: (id: number, checked: boolean) => void;
 }
 
-export function ProductTableRow({ product, isSelected, onSelect }: ProductTableRowProps) {
-  const [imgError, setImgError] = useState(false)
+export function ProductTableRow({
+  product,
+  isSelected,
+  onSelect,
+}: ProductTableRowProps) {
+  const [imgError, setImgError] = useState(false);
 
-  const isLowRating = product.rating < 3.5
+  const isLowRating = product.rating < 3.5;
 
   return (
     <tr
       className={cn(
-        'group border-b border-border transition-colors',
-        isSelected
-          ? 'bg-primary-50 border-l-4 border-l-primary'
-          : 'border-l-4 border-l-transparent hover:bg-[#FAFAFA]',
+        ROW_BASE_CLASS,
+        isSelected ? ROW_SELECTED_CLASS : ROW_DEFAULT_CLASS,
       )}
     >
       {/* Checkbox */}
@@ -53,35 +69,35 @@ export function ProductTableRow({ product, isSelected, onSelect }: ProductTableR
       </td>
 
       {/* Title + Category */}
-      <td className="py-3 pr-4">
+      <td className={CELL_BASE_CLASS}>
         <div className="min-w-0">
           <p className="truncate text-sm font-medium text-[#212529] max-w-[200px]">
             {product.title}
           </p>
           <p className="truncate text-xs text-muted capitalize max-w-[200px]">
-            {product.category?.replace(/-/g, ' ')}
+            {product.category?.replace(/-/g, " ")}
           </p>
         </div>
       </td>
 
       {/* Vendor (brand) */}
-      <td className="py-3 pr-4 whitespace-nowrap">
+      <td className={CELL_NOWRAP_CLASS}>
         <span className="text-sm font-semibold text-[#212529]">
-          {product.brand || '—'}
+          {product.brand || "—"}
         </span>
       </td>
 
       {/* SKU */}
-      <td className="py-3 pr-4 whitespace-nowrap">
-        <span className="text-sm text-[#495057]">{product.sku}</span>
+      <td className={CELL_NOWRAP_CLASS}>
+        <span className={NUMERIC_TEXT_CLASS}>{product.sku}</span>
       </td>
 
       {/* Rating */}
-      <td className="py-3 pr-4 whitespace-nowrap">
+      <td className={CELL_NOWRAP_CLASS}>
         <span
           className={cn(
-            'text-sm font-medium',
-            isLowRating ? 'text-danger' : 'text-[#495057]',
+            "font-roboto text-sm font-medium tracking-tight",
+            isLowRating ? "text-danger" : "text-[#495057]",
           )}
         >
           {product.rating.toFixed(1)}/5
@@ -89,10 +105,8 @@ export function ProductTableRow({ product, isSelected, onSelect }: ProductTableR
       </td>
 
       {/* Price */}
-      <td className="py-3 pr-4 whitespace-nowrap">
-        <span className="text-sm text-[#495057]">
-          {formatPrice(product.price)}
-        </span>
+      <td className={CELL_NOWRAP_CLASS}>
+        <span className={NUMERIC_TEXT_CLASS}>{formatPrice(product.price)}</span>
       </td>
 
       {/* Actions */}
@@ -100,14 +114,14 @@ export function ProductTableRow({ product, isSelected, onSelect }: ProductTableR
         <div className="flex items-center gap-2">
           <button
             type="button"
-            className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-white transition-colors hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-primary/40"
+            className={cn(PRIMARY_ACTION_BUTTON_CLASS, ACTION_BUTTON_FOCUS_CLASS)}
             aria-label="Добавить"
           >
             <Plus className="h-4 w-4" />
           </button>
           <button
             type="button"
-            className="flex h-8 w-8 items-center justify-center rounded-full border border-border text-muted transition-colors hover:bg-[#F1F3F5] focus:outline-none focus:ring-2 focus:ring-primary/40"
+            className={cn(SECONDARY_ACTION_BUTTON_CLASS, ACTION_BUTTON_FOCUS_CLASS)}
             aria-label="Действия"
           >
             <MoreHorizontal className="h-4 w-4" />
@@ -115,5 +129,5 @@ export function ProductTableRow({ product, isSelected, onSelect }: ProductTableR
         </div>
       </td>
     </tr>
-  )
+  );
 }

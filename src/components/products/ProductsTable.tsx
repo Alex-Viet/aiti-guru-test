@@ -1,50 +1,106 @@
-import { useState, useCallback } from 'react'
-import { RefreshCw } from 'lucide-react'
-import { useProducts } from '@/hooks/useProducts'
-import { useTableStore } from '@/store/tableStore'
-import { queryClient } from '@/lib/queryClient'
-import { ProductTableRow } from './ProductTableRow'
-import { TableSkeleton } from './TableSkeleton'
-import { Pagination } from './Pagination'
-import { AddProductModal } from './AddProductModal'
-import { SortDrawer } from './SortDrawer'
-import { cn } from '@/lib/utils'
-import type { Product } from '@/types'
+import { useState, useCallback } from "react";
+import { RefreshCw } from "lucide-react";
+import { useProducts } from "@/hooks/useProducts";
+import { useTableStore } from "@/store/tableStore";
+import { queryClient } from "@/lib/queryClient";
+import { ProductTableRow } from "./ProductTableRow";
+import { TableSkeleton } from "./TableSkeleton";
+import { Pagination } from "./Pagination";
+import { AddProductModal } from "./AddProductModal";
+import { SortDrawer } from "./SortDrawer";
+import { cn } from "@/lib/utils";
+import type { Product } from "@/types";
+
+const HEADER_CELL_CLASS =
+  "font-open-sans py-3 pr-4 text-left text-xs font-semibold uppercase tracking-wide text-muted";
+
+const STATUS_ROW_CLASS = "py-12 text-center text-sm";
+
+const SELECT_ALL_CHECKBOX_CLASS =
+  "h-4 w-4 cursor-pointer rounded border-[#CED4DA] accent-primary";
+
+const REFRESH_BUTTON_BASE_CLASS =
+  "flex h-9 w-9 items-center justify-center rounded-lg border border-border bg-white text-muted";
+
+const REFRESH_BUTTON_INTERACTION_CLASS =
+  "transition-colors hover:bg-[#F1F3F5] hover:text-[#495057] focus:outline-none focus:ring-2 focus:ring-primary/40";
+
+const TABLE_COLUMNS = [
+  "Наименование",
+  "Вендор",
+  "Артикул",
+  "Оценка",
+  "Цена, ₽",
+] as const;
 
 export function ProductsTable() {
-  const { products, total, isLoading, isFetching, isError } = useProducts()
-  const { page, pageSize, localProducts, setPage } = useTableStore()
-  const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set())
+  const { products, total, isLoading, isFetching, isError } = useProducts();
+  const { page, pageSize, localProducts, setPage } = useTableStore();
+  const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
 
   // Merge local products (at the top) with API products
-  const allProducts: Product[] = [...localProducts, ...products]
+  const allProducts: Product[] = [...localProducts, ...products];
 
   const handleSelect = useCallback((id: number, checked: boolean) => {
     setSelectedIds((prev) => {
-      const next = new Set(prev)
-      if (checked) next.add(id)
-      else next.delete(id)
-      return next
-    })
-  }, [])
+      const next = new Set(prev);
+      if (checked) next.add(id);
+      else next.delete(id);
+      return next;
+    });
+  }, []);
 
   const handleSelectAll = (checked: boolean) => {
     if (checked) {
-      setSelectedIds(new Set(allProducts.map((p) => p.id)))
+      setSelectedIds(new Set(allProducts.map((p) => p.id)));
     } else {
-      setSelectedIds(new Set())
+      setSelectedIds(new Set());
     }
-  }
+  };
 
-  const allSelected = allProducts.length > 0 && selectedIds.size === allProducts.length
-  const someSelected = selectedIds.size > 0 && !allSelected
+  const allSelected =
+    allProducts.length > 0 && selectedIds.size === allProducts.length;
+  const someSelected = selectedIds.size > 0 && !allSelected;
 
   const handleRefresh = () => {
-    void queryClient.invalidateQueries({ queryKey: ['products'] })
-  }
+    void queryClient.invalidateQueries({ queryKey: ["products"] });
+  };
 
   // Adjust total to account for local products
-  const adjustedTotal = total + localProducts.length
+  const adjustedTotal = total + localProducts.length;
+
+  const renderTableBody = () => {
+    if (isLoading) return <TableSkeleton rows={8} />;
+
+    if (isError) {
+      return (
+        <tr>
+          <td colSpan={8} className={cn(STATUS_ROW_CLASS, "text-danger")}>
+            Ошибка загрузки данных. Попробуйте обновить страницу.
+          </td>
+        </tr>
+      );
+    }
+
+    if (allProducts.length === 0) {
+      return (
+        <tr>
+          <td colSpan={8} className={cn(STATUS_ROW_CLASS, "text-muted")}>
+            Товары не найдены
+          </td>
+        </tr>
+      );
+    }
+
+    return allProducts.map((product) => (
+      <ProductTableRow
+        key={product.id}
+        product={product}
+        isSelected={selectedIds.has(product.id)}
+        onSelect={handleSelect}
+      />
+    ));
+  };
 
   return (
     <div className="rounded-xl bg-white shadow-card overflow-hidden">
@@ -57,15 +113,16 @@ export function ProductsTable() {
             type="button"
             onClick={handleRefresh}
             className={cn(
-              'flex h-9 w-9 items-center justify-center rounded-lg border border-border bg-white text-muted',
-              'transition-colors hover:bg-[#F1F3F5] hover:text-[#495057]',
-              'focus:outline-none focus:ring-2 focus:ring-primary/40',
-              isFetching && 'pointer-events-none',
+              REFRESH_BUTTON_BASE_CLASS,
+              REFRESH_BUTTON_INTERACTION_CLASS,
+              isFetching && "pointer-events-none",
             )}
             aria-label="Обновить таблицу"
             disabled={isFetching}
           >
-            <RefreshCw className={cn('h-4 w-4', isFetching && 'animate-spin')} />
+            <RefreshCw
+              className={cn("h-4 w-4", isFetching && "animate-spin")}
+            />
           </button>
 
           {/* Sort */}
@@ -93,58 +150,23 @@ export function ProductsTable() {
                   type="checkbox"
                   checked={allSelected}
                   ref={(el) => {
-                    if (el) el.indeterminate = someSelected
+                    if (el) el.indeterminate = someSelected;
                   }}
                   onChange={(e) => handleSelectAll(e.target.checked)}
-                  className="h-4 w-4 rounded border-[#CED4DA] accent-primary cursor-pointer"
+                  className={SELECT_ALL_CHECKBOX_CLASS}
                   aria-label="Выбрать все"
                 />
               </th>
               <th className="w-12 py-3 pr-3" />
-              <th className="py-3 pr-4 text-left text-xs font-semibold uppercase tracking-wide text-muted">
-                Наименование
-              </th>
-              <th className="py-3 pr-4 text-left text-xs font-semibold uppercase tracking-wide text-muted">
-                Вендор
-              </th>
-              <th className="py-3 pr-4 text-left text-xs font-semibold uppercase tracking-wide text-muted">
-                Артикул
-              </th>
-              <th className="py-3 pr-4 text-left text-xs font-semibold uppercase tracking-wide text-muted">
-                Оценка
-              </th>
-              <th className="py-3 pr-4 text-left text-xs font-semibold uppercase tracking-wide text-muted">
-                Цена, ₽
-              </th>
+              {TABLE_COLUMNS.map((column) => (
+                <th key={column} className={HEADER_CELL_CLASS}>
+                  {column}
+                </th>
+              ))}
               <th className="py-3 pr-4" />
             </tr>
           </thead>
-          <tbody>
-            {isLoading ? (
-              <TableSkeleton rows={8} />
-            ) : isError ? (
-              <tr>
-                <td colSpan={8} className="py-12 text-center text-sm text-danger">
-                  Ошибка загрузки данных. Попробуйте обновить страницу.
-                </td>
-              </tr>
-            ) : allProducts.length === 0 ? (
-              <tr>
-                <td colSpan={8} className="py-12 text-center text-sm text-muted">
-                  Товары не найдены
-                </td>
-              </tr>
-            ) : (
-              allProducts.map((product) => (
-                <ProductTableRow
-                  key={product.id}
-                  product={product}
-                  isSelected={selectedIds.has(product.id)}
-                  onSelect={handleSelect}
-                />
-              ))
-            )}
-          </tbody>
+          <tbody>{renderTableBody()}</tbody>
         </table>
       </div>
 
@@ -160,5 +182,5 @@ export function ProductsTable() {
         </div>
       )}
     </div>
-  )
+  );
 }
