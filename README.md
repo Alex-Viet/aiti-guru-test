@@ -6,7 +6,7 @@
 
 | Технология | Назначение | Обоснование |
 |---|---|---|
-| **React 18 + Vite** | UI + сборка | Instant HMR, оптимальный production bundle, нет оверхеда SSR |
+| **React 19 + Vite** | UI + сборка | Instant HMR, оптимальный production bundle, нет оверхеда SSR |
 | **TypeScript** (`strict: true`) | Типизация | Обязательное условие ТЗ |
 | **React Router v6** | Маршрутизация | Стандарт для SPA, protected routes |
 | **Zustand** | Глобальный стейт | Минимальный бойлерплейт, нет Provider, persist middleware |
@@ -25,6 +25,8 @@ npm run dev
 ```
 
 Приложение запустится на `http://localhost:5173`
+
+Приложение доступно на `https://aiti-guru-test-sigma.vercel.app/`
 
 ## Тестовые учётные данные
 
@@ -53,7 +55,8 @@ npm run dev
 
 ### Сортировка
 - Кнопка (3 полоски) открывает дропдаун: поле + направление
-- API-сортировка через параметры `sortBy` / `order`
+- API-сортировка через параметры `sortBy` / `order` для цены, рейтинга, наименования
+- Сортировка по вендору — клиентская (DummyJSON не поддерживает стабильную серверную сортировку по `brand`): загружается весь список и сортируется локально
 - Состояние сортировки хранится в Zustand
 
 ### Добавление товара
@@ -73,15 +76,47 @@ npm run dev
 
 ```
 src/
-├── api/            # Типизированные API-функции (auth, products)
+├── api/
+│   ├── auth.ts              # loginUser, getAuthUser
+│   └── products.ts          # getProducts, searchProducts
 ├── components/
-│   ├── ui/         # Переиспользуемые компоненты (Button, Input, Checkbox, Dialog)
-│   ├── auth/       # LoginForm
-│   └── products/   # ProductsTable, ProductTableRow, AddProductModal, SortDrawer, Pagination
-├── hooks/          # useProducts (TanStack Query), useDebounce
-├── lib/            # queryClient, utils (cn, formatPrice)
-├── pages/          # LoginPage, ProductsPage
-├── router/         # Маршруты + ProtectedRoute
-├── store/          # authStore (persist), tableStore
-└── types/          # Все TypeScript типы
+│   ├── auth/
+│   │   ├── LoginForm.tsx    # Форма входа (RHF + Zod)
+│   │   ├── ProtectedRoute.tsx  # Guard: редирект на /login если нет токена
+│   │   └── PublicRoute.tsx     # Guard: редирект на / если авторизован
+│   ├── products/
+│   │   ├── AddProductModal.tsx      # Модалка добавления товара
+│   │   ├── Pagination.tsx           # Пагинация с многоточием
+│   │   ├── productTableClasses.ts   # Общие Tailwind-константы таблицы
+│   │   ├── ProductsSearch.tsx       # Поиск с debounce 400ms
+│   │   ├── ProductsTable.tsx        # Основная таблица товаров
+│   │   ├── ProductTableRow.tsx      # Строка таблицы
+│   │   ├── SortDrawer.tsx           # Дропдаун сортировки
+│   │   └── TableSkeleton.tsx        # Skeleton-loader строк
+│   └── ui/
+│       ├── Button.tsx       # Кнопка (cva: primary, secondary, ghost)
+│       ├── Checkbox.tsx     # Radix UI Checkbox
+│       ├── Dialog.tsx       # Radix UI Dialog
+│       ├── Input.tsx        # Инпут с leftIcon / rightIcon / error
+│       └── Logo.tsx         # SVG-логотип (AudioWaveIcon)
+├── config/
+│   ├── constants.ts         # PAGE_SIZE и другие константы приложения
+│   └── env.ts               # VITE_API_BASE_URL с fallback
+├── hooks/
+│   ├── useClickOutside.ts   # Закрытие по клику вне элемента
+│   ├── useDebounce.ts       # Debounce значения с задержкой
+│   └── useProducts.ts       # TanStack Query: загрузка и поиск товаров
+├── lib/
+│   ├── queryClient.ts       # Настройки QueryClient
+│   └── utils.ts             # cn, formatPrice, capitalize
+├── pages/
+│   ├── LoginPage.tsx        # Страница авторизации
+│   └── ProductsPage.tsx     # Страница с таблицей товаров
+├── router/
+│   └── index.tsx            # createBrowserRouter: /login, /, *
+├── store/
+│   ├── authStore.ts         # Zustand: user, accessToken, rememberMe + persist
+│   └── tableStore.ts        # Zustand: page, search, sort, localProducts
+└── types/
+    └── index.ts             # Product, AuthUser, SortField, ApiError и др.
 ```
