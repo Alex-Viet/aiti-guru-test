@@ -14,7 +14,7 @@ import {
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { useTableStore } from "@/store/tableStore";
-import { useState } from "react";
+import { useState, type InputHTMLAttributes } from "react";
 
 const addProductSchema = z.object({
   title: z.string().min(1, "Введите наименование"),
@@ -31,9 +31,49 @@ const addProductSchema = z.object({
 
 type AddProductFormValues = z.infer<typeof addProductSchema>;
 
+const ADD_PRODUCT_FIELDS: Array<{
+  id: string;
+  name: keyof AddProductFormValues;
+  label: string;
+  placeholder: string;
+  inputMode?: InputHTMLAttributes<HTMLInputElement>["inputMode"];
+}> = [
+  {
+    id: "prod-title",
+    name: "title",
+    label: "Наименование",
+    placeholder: "Введите наименование товара",
+  },
+  {
+    id: "prod-price",
+    name: "price",
+    label: "Цена, ₽",
+    placeholder: "0.00",
+    inputMode: "decimal",
+  },
+  {
+    id: "prod-brand",
+    name: "brand",
+    label: "Вендор",
+    placeholder: "Введите вендора",
+  },
+  {
+    id: "prod-sku",
+    name: "sku",
+    label: "Артикул",
+    placeholder: "Введите артикул",
+  },
+];
+
+const FORM_FIELD_CLASS = "space-y-1";
+const FORM_LABEL_CLASS = "text-sm font-medium text-table-text";
+const FORM_ERROR_CLASS = "text-xs text-danger";
+const FORM_INPUT_CLASS = "p-4";
+
 export function AddProductModal() {
   const addLocalProduct = useTableStore((s) => s.addLocalProduct);
   const [open, setOpen] = useState(false);
+  const [localIdCounter, setLocalIdCounter] = useState(1_000_000);
 
   const {
     register,
@@ -46,8 +86,11 @@ export function AddProductModal() {
   });
 
   const onSubmit = (values: AddProductFormValues) => {
+    const nextLocalId = localIdCounter + 1;
+    setLocalIdCounter(nextLocalId);
+
     const newProduct = {
-      id: Date.now(), // temporary ID for local product
+      id: nextLocalId,
       title: values.title,
       price: Number(values.price),
       brand: values.brand,
@@ -92,8 +135,10 @@ export function AddProductModal() {
 
       <DialogContent>
         <DialogHeader>
-          <DialogTitle className="font-cairo text-xl font-bold text-[#2D2F35]">Добавить товар</DialogTitle>
-          <DialogDescription className="font-open-sans text-sm text-[#495057]">
+          <DialogTitle className="font-cairo text-xl font-bold text-table-title">
+            Добавить товар
+          </DialogTitle>
+          <DialogDescription className="font-open-sans text-sm text-table-text">
             Заполните основные поля для добавления нового товара в список
           </DialogDescription>
         </DialogHeader>
@@ -103,86 +148,26 @@ export function AddProductModal() {
           noValidate
           className="space-y-4"
         >
-          {/* Title */}
-          <div className="space-y-1">
-            <label
-              htmlFor="prod-title"
-              className="text-sm font-medium text-[#495057]"
-            >
-              Наименование <span className="text-danger">*</span>
-            </label>
-            <Input
-              id="prod-title"
-              placeholder="Введите наименование товара"
-              className="p-4"
-              error={!!errors.title}
-              {...register("title")}
-            />
-            {errors.title && (
-              <p className="text-xs text-danger">{errors.title.message}</p>
-            )}
-          </div>
-
-          {/* Price */}
-          <div className="space-y-1">
-            <label
-              htmlFor="prod-price"
-              className="text-sm font-medium text-[#495057]"
-            >
-              Цена, ₽ <span className="text-danger">*</span>
-            </label>
-            <Input
-              id="prod-price"
-              placeholder="0.00"
-              inputMode="decimal"
-              className="p-4"
-              error={!!errors.price}
-              {...register("price")}
-            />
-            {errors.price && (
-              <p className="text-xs text-danger">{errors.price.message}</p>
-            )}
-          </div>
-
-          {/* Brand / Vendor */}
-          <div className="space-y-1">
-            <label
-              htmlFor="prod-brand"
-              className="text-sm font-medium text-[#495057]"
-            >
-              Вендор <span className="text-danger">*</span>
-            </label>
-            <Input
-              id="prod-brand"
-              placeholder="Введите вендора"
-              className="p-4"
-              error={!!errors.brand}
-              {...register("brand")}
-            />
-            {errors.brand && (
-              <p className="text-xs text-danger">{errors.brand.message}</p>
-            )}
-          </div>
-
-          {/* SKU */}
-          <div className="space-y-1">
-            <label
-              htmlFor="prod-sku"
-              className="text-sm font-medium text-[#495057]"
-            >
-              Артикул <span className="text-danger">*</span>
-            </label>
-            <Input
-              id="prod-sku"
-              placeholder="Введите артикул"
-              className="p-4"
-              error={!!errors.sku}
-              {...register("sku")}
-            />
-            {errors.sku && (
-              <p className="text-xs text-danger">{errors.sku.message}</p>
-            )}
-          </div>
+          {ADD_PRODUCT_FIELDS.map((field) => (
+            <div key={field.id} className={FORM_FIELD_CLASS}>
+              <label htmlFor={field.id} className={FORM_LABEL_CLASS}>
+                {field.label} <span className="text-danger">*</span>
+              </label>
+              <Input
+                id={field.id}
+                placeholder={field.placeholder}
+                inputMode={field.inputMode}
+                className={FORM_INPUT_CLASS}
+                error={!!errors[field.name]}
+                {...register(field.name)}
+              />
+              {errors[field.name] && (
+                <p className={FORM_ERROR_CLASS}>
+                  {errors[field.name]?.message}
+                </p>
+              )}
+            </div>
+          ))}
 
           {/* Actions */}
           <div className="flex justify-end gap-3 pt-2">

@@ -11,26 +11,27 @@ import { SortDrawer } from "./SortDrawer";
 import { Checkbox } from "@/components/ui/Checkbox";
 import { cn } from "@/lib/utils";
 import type { Product } from "@/types";
+import {
+  TABLE_CHECKBOX_CLASS,
+  TABLE_ROW_BORDER_CLASS,
+} from "./productTableClasses";
 
 const HEADER_CELL_CLASS =
-  "font-cairo p-4 text-left text-base font-bold tracking-wide text-[#B2B4BD]";
+  "font-cairo p-4 text-left text-base font-bold tracking-wide text-table-heading";
 
 const STATUS_ROW_CLASS = "py-12 text-center text-sm";
-
-const TABLE_CHECKBOX_CLASS =
-  "h-[22px] w-[22px] cursor-pointer rounded-[4px] border border-[#b2b3b9]";
 
 const REFRESH_BUTTON_BASE_CLASS =
   "flex h-[42px] w-[42px] items-center justify-center rounded-lg border border-border bg-white text-muted";
 
 const REFRESH_BUTTON_INTERACTION_CLASS =
-  "transition-colors hover:bg-[#F1F3F5] hover:text-[#495057] focus:outline-none focus:ring-2 focus:ring-primary/40";
+  "transition-colors hover:bg-table-surface hover:text-table-text focus:outline-none focus:ring-2 focus:ring-primary/40";
 
 const TABLE_COLUMNS = [
-  { label: "Наименование", className: "w-[44%] text-left" },
-  { label: "Вендор", className: "w-[18%] text-center" },
-  { label: "Артикул", className: "w-[18%] text-center" },
-  { label: "Оценка", className: "w-[10%] text-center" },
+  { label: "Наименование", className: "w-[26%] text-left" },
+  { label: "Вендор", className: "w-[15%] text-center" },
+  { label: "Артикул", className: "w-[15%] text-center" },
+  { label: "Оценка", className: "w-[12%] text-center" },
   { label: "Цена, ₽", className: "w-[12%] text-center" },
 ] as const;
 
@@ -107,7 +108,7 @@ export function ProductsTable() {
     <div className="overflow-hidden bg-white flex flex-col gap-10">
       {/* Section header */}
       <div className="flex items-center justify-between">
-        <h2 className="font-cairo text-xl font-bold text-[#2D2F35]">
+        <h2 className="font-cairo text-xl font-bold text-table-title">
           Все позиции
         </h2>
         <div className="flex items-center gap-2">
@@ -138,7 +139,7 @@ export function ProductsTable() {
 
       {/* Loading bar */}
       {isFetching && !isLoading && (
-        <div className="h-0.5 w-full overflow-hidden bg-[#E9ECEF]">
+        <div className="h-0.5 w-full overflow-hidden bg-table-skeleton">
           <div className="h-full w-1/3 animate-[loading_1s_ease-in-out_infinite] bg-primary" />
         </div>
       )}
@@ -147,7 +148,12 @@ export function ProductsTable() {
       <div className="overflow-x-auto scrollbar-thin">
         <table className="w-full border-collapse">
           <thead>
-            <tr className="border-b border-[#e2e2e2] border-l-4 border-l-transparent">
+            <tr
+              className={cn(
+                TABLE_ROW_BORDER_CLASS,
+                "border-l-4 border-l-transparent",
+              )}
+            >
               <th className="w-12 py-4 pl-5 pr-2">
                 <Checkbox
                   checked={
@@ -168,7 +174,7 @@ export function ProductsTable() {
                   {column.label}
                 </th>
               ))}
-              <th className="w-[120px] py-4 pr-4" />
+              <th className="w-[320px] p-4" />
             </tr>
           </thead>
           <tbody>{renderTableBody()}</tbody>

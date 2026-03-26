@@ -3,12 +3,18 @@ import { Plus, MoreHorizontal } from "lucide-react";
 import { cn, formatPrice } from "@/lib/utils";
 import { Checkbox } from "@/components/ui/Checkbox";
 import type { Product } from "@/types";
+import {
+  TABLE_CELL_BASE_CLASS,
+  TABLE_CHECKBOX_CLASS,
+  TABLE_ROW_BORDER_CLASS,
+} from "./productTableClasses";
 
-const ROW_BASE_CLASS = "group border-b border-[#e2e2e2] transition-colors";
+const ROW_BASE_CLASS = cn(TABLE_ROW_BORDER_CLASS, "group transition-colors");
 const ROW_SELECTED_CLASS = "border-l-4 border-l-secondary";
-const ROW_DEFAULT_CLASS = "border-l-4 border-l-transparent hover:bg-[#FAFAFA]";
+const ROW_DEFAULT_CLASS =
+  "border-l-4 border-l-transparent hover:bg-table-hover";
 
-const CELL_BASE_CLASS = "p-4";
+const CELL_BASE_CLASS = TABLE_CELL_BASE_CLASS;
 const CELL_NOWRAP_CLASS = `${CELL_BASE_CLASS} whitespace-nowrap`;
 const CELL_NOWRAP_CENTER_CLASS = `${CELL_NOWRAP_CLASS} text-center`;
 const NUMERIC_TEXT_CLASS = "font-open-sans text-base text-[#000000]";
@@ -18,7 +24,7 @@ const ACTION_BUTTON_FOCUS_CLASS =
 const PRIMARY_ACTION_BUTTON_CLASS =
   "flex h-[27px] w-[52px] items-center justify-center rounded-3xl bg-primary text-white transition-colors hover:bg-primary-hover";
 const SECONDARY_ACTION_BUTTON_CLASS =
-  "flex h-8 w-8 items-center justify-center rounded-full border border-[#D5D8E0] text-[#A8ADB9] transition-colors hover:bg-[#F1F3F5]";
+  "flex h-8 w-8 items-center justify-center rounded-full border border-[#D5D8E0] text-table-icon transition-colors hover:bg-table-surface";
 
 interface ProductTableRowProps {
   product: Product;
@@ -46,7 +52,7 @@ export function ProductTableRow({
       <td className="w-12 py-4 pl-5 pr-2">
         <Checkbox
           checked={isSelected}
-          className="h-[22px] w-[22px] cursor-pointer rounded-[4px] border border-[#b2b3b9]"
+          className={TABLE_CHECKBOX_CLASS}
           onCheckedChange={(checked) => onSelect(product.id, checked === true)}
           aria-label={`Выбрать ${product.title}`}
         />
@@ -55,7 +61,7 @@ export function ProductTableRow({
       {/* Title + Category */}
       <td className={CELL_BASE_CLASS}>
         <div className="flex items-center gap-4 min-w-0">
-          <div className="h-12 w-12 shrink-0 overflow-hidden rounded-lg bg-[#F1F3F5]">
+          <div className="h-12 w-12 shrink-0 overflow-hidden rounded-lg bg-table-surface">
             {!imgError && product.thumbnail ? (
               <img
                 src={product.thumbnail}
@@ -74,7 +80,7 @@ export function ProductTableRow({
             <p className="font-cairo truncate text-base font-bold text-[#161919] max-w-[220px]">
               {product.title}
             </p>
-            <p className="font-cairo truncate text-sm text-[#b2b3b9] capitalize max-w-[220px]">
+            <p className="font-cairo truncate text-sm text-table-heading capitalize max-w-[220px]">
               {product.category?.replace(/-/g, " ")}
             </p>
           </div>
@@ -98,7 +104,7 @@ export function ProductTableRow({
         <span
           className={cn(
             NUMERIC_TEXT_CLASS,
-            isLowRating ? "text-danger" : "text-[#495057]",
+            isLowRating ? "text-danger" : "text-table-text",
           )}
         >
           {product.rating.toFixed(1)}/5
@@ -112,7 +118,7 @@ export function ProductTableRow({
             product.price,
           ).split(",");
           return (
-            <span className="font-roboto text-base leading-[110%] text-[#222">
+            <span className="font-roboto text-base leading-[110%] text-[#222]">
               {integerPart}
               <span className="text-[#999]">, {decimalPart}</span>
             </span>
@@ -121,7 +127,7 @@ export function ProductTableRow({
       </td>
 
       {/* Actions */}
-      <td className="py-3 pr-3 whitespace-nowrap">
+      <td className="p-4 pl-12 whitespace-nowrap">
         <div className="flex items-center gap-8">
           <button
             type="button"

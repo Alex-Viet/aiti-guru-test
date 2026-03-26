@@ -44,12 +44,12 @@ export function Pagination({
 
   return (
     <div className="flex items-center justify-between">
-      <span className="font-roboto text-lg text-[#969b9f]">
+      <span className="font-roboto text-lg text-[#969B9F]">
         Показано{" "}
-        <span className="text-[#333]">
+        <span className="text-[#333333]">
           {start}–{end}
         </span>{" "}
-        из <span className="text-[#333]">{total}</span>
+        из <span className="text-[#333333]">{total}</span>
       </span>
 
       <div className="flex items-center gap-4">
@@ -69,7 +69,7 @@ export function Pagination({
             p === "..." ? (
               <span
                 key={`ellipsis-${idx}`}
-                className="px-1 text-sm text-[#A8ADB9]"
+                className="px-1 text-sm text-table-icon"
               >
                 ...
               </span>
@@ -121,7 +121,7 @@ function PageBtn({
         "disabled:pointer-events-none disabled:opacity-35",
         isActive
           ? "border border-[#6C79FF] bg-[#797fea] font-semibold text-white shadow-[inset_0_1px_0_0_rgba(255,255,255,0.24)]"
-          : "border border-[#ECEEF2] bg-[#FAFBFD] text-[#A8ADB9] hover:bg-[#F1F3F5]",
+          : "border border-[#ECEEF2] bg-[#FAFBFD] text-table-icon hover:bg-table-surface",
         className,
       )}
       {...props}

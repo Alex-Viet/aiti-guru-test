@@ -19,6 +19,17 @@ export default {
         page: "#F6F6F6",
         login: "#474747",
         "table-row-active": "#F0F3FF",
+        table: {
+          border: "#E2E2E2",
+          heading: "#B2B4BD",
+          text: "#495057",
+          title: "#2D2F35",
+          hover: "#FAFAFA",
+          surface: "#F1F3F5",
+          icon: "#A8ADB9",
+          checkbox: "#B2B3B9",
+          skeleton: "#E9ECEF",
+        },
       },
       fontFamily: {
         sans: ["Inter", "system-ui", "sans-serif"],
