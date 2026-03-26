@@ -26,7 +26,7 @@ npm run dev
 
 Приложение запустится на `http://localhost:5173`
 
-Приложение доступно на `https://aiti-guru-test-sigma.vercel.app/`
+Приложение доступно на [https://aiti-guru-test-sigma.vercel.app](https://aiti-guru-test-sigma.vercel.app)
 
 ## Тестовые учётные данные
 
