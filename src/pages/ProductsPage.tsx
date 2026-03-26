@@ -16,14 +16,14 @@ export default function ProductsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-page">
+    <div className="min-h-screen bg-page pt-[22px]">
       {/* Top header */}
-      <header className="sticky top-0 z-30 border-b border-border bg-white shadow-card">
-        <div className="mx-auto flex max-w-[1280px] items-center gap-4 px-6 py-3">
-          <h1 className="text-xl font-bold text-[#212529]">Товары</h1>
+      <header className="sticky top-0 z-30 border-b border-border bg-white shadow-card w-full">
+        <div className="mx-auto flex justify-between items-center gap-4 px-6 py-3 min-h-[105px]">
+          <h1 className="font-cairo text-2xl font-bold text-[#202020]">Товары</h1>
 
           {/* Search */}
-          <div className="flex-1">
+          <div className="">
             <ProductsSearch />
           </div>
 
@@ -41,7 +41,7 @@ export default function ProductsPage() {
       </header>
 
       {/* Page content */}
-      <main className="mx-auto max-w-[1280px] px-6 py-6">
+      <main className="mx-auto mt-[30px] p-[30px] bg-white">
         <ProductsTable />
       </main>
     </div>

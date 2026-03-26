@@ -56,7 +56,7 @@ export function SortDrawer() {
         type="button"
         onClick={() => setOpen((v) => !v)}
         className={cn(
-          'flex h-9 w-9 items-center justify-center rounded-lg border border-border bg-white transition-colors',
+          'flex h-[42px] w-[42px] items-center justify-center rounded-lg border border-border bg-white transition-colors',
           'hover:bg-[#F1F3F5] focus:outline-none focus:ring-2 focus:ring-primary/40',
           open && 'bg-primary-50 border-primary',
           sortBy && 'border-primary bg-primary-50',

@@ -4,19 +4,21 @@ import { cn, formatPrice } from "@/lib/utils";
 import { Checkbox } from "@/components/ui/Checkbox";
 import type { Product } from "@/types";
 
-const ROW_BASE_CLASS = "group border-b border-border transition-colors";
-const ROW_SELECTED_CLASS = "border-l-4 border-l-primary bg-primary-50";
+const ROW_BASE_CLASS = "group border-b border-[#e2e2e2] transition-colors";
+const ROW_SELECTED_CLASS = "border-l-4 border-l-secondary";
 const ROW_DEFAULT_CLASS = "border-l-4 border-l-transparent hover:bg-[#FAFAFA]";
 
-const CELL_BASE_CLASS = "py-3 pr-4";
+const CELL_BASE_CLASS = "p-4";
 const CELL_NOWRAP_CLASS = `${CELL_BASE_CLASS} whitespace-nowrap`;
-const NUMERIC_TEXT_CLASS = "font-roboto text-sm text-[#495057]";
-const ACTION_BUTTON_FOCUS_CLASS = "focus:outline-none focus:ring-2 focus:ring-primary/40";
+const CELL_NOWRAP_CENTER_CLASS = `${CELL_NOWRAP_CLASS} text-center`;
+const NUMERIC_TEXT_CLASS = "font-open-sans text-base text-[#000000]";
+const ACTION_BUTTON_FOCUS_CLASS =
+  "focus:outline-none focus:ring-2 focus:ring-primary/40";
 
 const PRIMARY_ACTION_BUTTON_CLASS =
-  "flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-white transition-colors hover:bg-primary-hover";
+  "flex h-[27px] w-[52px] items-center justify-center rounded-3xl bg-primary text-white transition-colors hover:bg-primary-hover";
 const SECONDARY_ACTION_BUTTON_CLASS =
-  "flex h-8 w-8 items-center justify-center rounded-full border border-border text-muted transition-colors hover:bg-[#F1F3F5]";
+  "flex h-8 w-8 items-center justify-center rounded-full border border-[#D5D8E0] text-[#A8ADB9] transition-colors hover:bg-[#F1F3F5]";
 
 interface ProductTableRowProps {
   product: Product;
@@ -41,62 +43,61 @@ export function ProductTableRow({
       )}
     >
       {/* Checkbox */}
-      <td className="w-10 py-3 pl-4 pr-2">
+      <td className="w-12 py-4 pl-5 pr-2">
         <Checkbox
           checked={isSelected}
+          className="h-[22px] w-[22px] cursor-pointer rounded-[4px] border border-[#b2b3b9]"
           onCheckedChange={(checked) => onSelect(product.id, checked === true)}
           aria-label={`Выбрать ${product.title}`}
         />
       </td>
 
-      {/* Thumbnail */}
-      <td className="w-12 py-3 pr-3">
-        <div className="h-10 w-10 shrink-0 overflow-hidden rounded-lg bg-[#F1F3F5]">
-          {!imgError && product.thumbnail ? (
-            <img
-              src={product.thumbnail}
-              alt={product.title}
-              className="h-full w-full object-cover"
-              onError={() => setImgError(true)}
-              loading="lazy"
-            />
-          ) : (
-            <div className="flex h-full w-full items-center justify-center text-xs text-muted select-none">
-              —
-            </div>
-          )}
-        </div>
-      </td>
-
       {/* Title + Category */}
       <td className={CELL_BASE_CLASS}>
-        <div className="min-w-0">
-          <p className="truncate text-sm font-medium text-[#212529] max-w-[200px]">
-            {product.title}
-          </p>
-          <p className="truncate text-xs text-muted capitalize max-w-[200px]">
-            {product.category?.replace(/-/g, " ")}
-          </p>
+        <div className="flex items-center gap-4 min-w-0">
+          <div className="h-12 w-12 shrink-0 overflow-hidden rounded-lg bg-[#F1F3F5]">
+            {!imgError && product.thumbnail ? (
+              <img
+                src={product.thumbnail}
+                alt={product.title}
+                className="h-full w-full object-cover"
+                onError={() => setImgError(true)}
+                loading="lazy"
+              />
+            ) : (
+              <div className="flex h-full w-full items-center justify-center text-xs text-muted select-none">
+                —
+              </div>
+            )}
+          </div>
+          <div className="min-w-0">
+            <p className="font-cairo truncate text-base font-bold text-[#161919] max-w-[220px]">
+              {product.title}
+            </p>
+            <p className="font-cairo truncate text-sm text-[#b2b3b9] capitalize max-w-[220px]">
+              {product.category?.replace(/-/g, " ")}
+            </p>
+          </div>
         </div>
       </td>
 
       {/* Vendor (brand) */}
-      <td className={CELL_NOWRAP_CLASS}>
-        <span className="text-sm font-semibold text-[#212529]">
+      <td className={CELL_NOWRAP_CENTER_CLASS}>
+        <span className="font-open-sans text-base font-bold text-[#212529]">
           {product.brand || "—"}
         </span>
       </td>
 
       {/* SKU */}
-      <td className={CELL_NOWRAP_CLASS}>
+      <td className={CELL_NOWRAP_CENTER_CLASS}>
         <span className={NUMERIC_TEXT_CLASS}>{product.sku}</span>
       </td>
 
       {/* Rating */}
-      <td className={CELL_NOWRAP_CLASS}>
+      <td className={CELL_NOWRAP_CENTER_CLASS}>
         <span
           className={cn(
-            "font-roboto text-sm font-medium tracking-tight",
+            NUMERIC_TEXT_CLASS,
             isLowRating ? "text-danger" : "text-[#495057]",
           )}
         >
@@ -105,23 +106,39 @@ export function ProductTableRow({
       </td>
 
       {/* Price */}
-      <td className={CELL_NOWRAP_CLASS}>
-        <span className={NUMERIC_TEXT_CLASS}>{formatPrice(product.price)}</span>
+      <td className={CELL_NOWRAP_CENTER_CLASS}>
+        {(() => {
+          const [integerPart, decimalPart = "00"] = formatPrice(
+            product.price,
+          ).split(",");
+          return (
+            <span className="font-roboto text-base leading-[110%] text-[#222">
+              {integerPart}
+              <span className="text-[#999]">, {decimalPart}</span>
+            </span>
+          );
+        })()}
       </td>
 
       {/* Actions */}
       <td className="py-3 pr-3 whitespace-nowrap">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-8">
           <button
             type="button"
-            className={cn(PRIMARY_ACTION_BUTTON_CLASS, ACTION_BUTTON_FOCUS_CLASS)}
+            className={cn(
+              PRIMARY_ACTION_BUTTON_CLASS,
+              ACTION_BUTTON_FOCUS_CLASS,
+            )}
             aria-label="Добавить"
           >
-            <Plus className="h-4 w-4" />
+            <Plus className="h-6 w-6" />
           </button>
           <button
             type="button"
-            className={cn(SECONDARY_ACTION_BUTTON_CLASS, ACTION_BUTTON_FOCUS_CLASS)}
+            className={cn(
+              SECONDARY_ACTION_BUTTON_CLASS,
+              ACTION_BUTTON_FOCUS_CLASS,
+            )}
             aria-label="Действия"
           >
             <MoreHorizontal className="h-4 w-4" />
