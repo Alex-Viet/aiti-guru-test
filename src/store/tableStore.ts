@@ -1,31 +1,30 @@
-import { create } from 'zustand'
-import type { Product, SortField, SortOrder } from '@/types'
-
-const PAGE_SIZE = 20
+import { create } from "zustand";
+import type { Product, SortField, SortOrder } from "@/types";
+import { PAGE_SIZE } from "@/config/constants";
 
 interface TableState {
-  page: number
-  search: string
-  sortBy: SortField | null
-  order: SortOrder
-  localProducts: Product[]
-  pageSize: number
+  page: number;
+  search: string;
+  sortBy: SortField | null;
+  order: SortOrder;
+  localProducts: Product[];
+  pageSize: number;
   // Actions
-  setPage: (page: number) => void
-  setSearch: (search: string) => void
-  setSort: (sortBy: SortField | null, order: SortOrder) => void
-  addLocalProduct: (product: Product) => void
-  reset: () => void
+  setPage: (page: number) => void;
+  setSearch: (search: string) => void;
+  setSort: (sortBy: SortField | null, order: SortOrder) => void;
+  addLocalProduct: (product: Product) => void;
+  reset: () => void;
 }
 
 const initialState = {
   page: 1,
-  search: '',
+  search: "",
   sortBy: null as SortField | null,
-  order: 'asc' as SortOrder,
+  order: "asc" as SortOrder,
   localProducts: [] as Product[],
   pageSize: PAGE_SIZE,
-}
+};
 
 export const useTableStore = create<TableState>()((set) => ({
   ...initialState,
@@ -42,4 +41,4 @@ export const useTableStore = create<TableState>()((set) => ({
     })),
 
   reset: () => set(initialState),
-}))
+}));

@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useMemo } from "react";
 import { RefreshCw } from "lucide-react";
 import { useProducts } from "@/hooks/useProducts";
 import { useTableStore } from "@/store/tableStore";
@@ -41,7 +41,10 @@ export function ProductsTable() {
   const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
 
   // Merge local products (at the top) with API products
-  const allProducts: Product[] = [...localProducts, ...products];
+  const allProducts = useMemo<Product[]>(
+    () => [...localProducts, ...products],
+    [localProducts, products],
+  );
 
   const handleSelect = useCallback((id: number, checked: boolean) => {
     setSelectedIds((prev) => {

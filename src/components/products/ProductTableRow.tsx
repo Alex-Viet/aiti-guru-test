@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { memo, useState } from "react";
 import { Plus, MoreHorizontal } from "lucide-react";
 import { cn, formatPrice } from "@/lib/utils";
 import { Checkbox } from "@/components/ui/Checkbox";
@@ -32,7 +32,7 @@ interface ProductTableRowProps {
   onSelect: (id: number, checked: boolean) => void;
 }
 
-export function ProductTableRow({
+function ProductTableRowBase({
   product,
   isSelected,
   onSelect,
@@ -40,6 +40,9 @@ export function ProductTableRow({
   const [imgError, setImgError] = useState(false);
 
   const isLowRating = product.rating < 3.5;
+  const [priceInteger, priceDecimal = "00"] = formatPrice(product.price).split(
+    ",",
+  );
 
   return (
     <tr
@@ -113,17 +116,10 @@ export function ProductTableRow({
 
       {/* Price */}
       <td className={CELL_NOWRAP_CENTER_CLASS}>
-        {(() => {
-          const [integerPart, decimalPart = "00"] = formatPrice(
-            product.price,
-          ).split(",");
-          return (
-            <span className="font-roboto text-base leading-[110%] text-[#222]">
-              {integerPart}
-              <span className="text-[#999]">, {decimalPart}</span>
-            </span>
-          );
-        })()}
+        <span className="font-roboto text-base leading-[110%] text-[#222]">
+          {priceInteger}
+          <span className="text-[#999]">, {priceDecimal}</span>
+        </span>
       </td>
 
       {/* Actions */}
@@ -154,3 +150,5 @@ export function ProductTableRow({
     </tr>
   );
 }
+
+export const ProductTableRow = memo(ProductTableRowBase);
